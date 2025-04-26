@@ -7,13 +7,14 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Handles writing log messages to files.
- * Demonstrates File I/O (XII).
+ * This class demonstrates File I/O (XII).
  */
 class LogManager {
-    private final String logDirectory;
+    private final String logDirectory; // Directory where log files will be stored
 
     /**
-     * Constructor initializes the log directory.
+     * Constructor initializes the log directory to a default value ("logs").
+     * This constructor is used when no specific log directory is provided.
      */
     public LogManager() {
         this("logs"); // Default log directory
@@ -21,15 +22,15 @@ class LogManager {
 
     /**
      * Constructor allowing custom log directory.
-     *
+     * 
      * @param logDirectory Path to the directory for log files.
      */
     public LogManager(String logDirectory) {
         this.logDirectory = logDirectory;
-        // Create directory if it doesn't exist (XII - File Handling)
+        // Create the directory if it doesn't exist (XII - File Handling)
         File dir = new File(this.logDirectory);
         if (!dir.exists()) {
-            boolean created = dir.mkdirs();
+            boolean created = dir.mkdirs(); // Try creating the directory
             if (created) {
                 System.out.println("Log directory created: " + dir.getAbsolutePath());
             } else {
@@ -40,22 +41,24 @@ class LogManager {
 
     /**
      * Writes a message to a specified log file within the log directory.
-     * Appends to the file if it exists.
+     * Appends to the file if it exists. Thread-safe due to synchronized method.
      *
      * @param filename The name of the log file (e.g., "system.log").
-     * @param message  The message to write.
+     * @param message  The message to write in the log file.
      */
     public synchronized void writeLog(String filename, String message) {
         // Use try-with-resources for automatic closing of FileWriter/PrintWriter (XII - File Handling)
         try (FileWriter fw = new FileWriter(logDirectory + File.separator + filename, true); // true for append mode
              PrintWriter pw = new PrintWriter(fw)) {
 
+            // Write the current timestamp followed by the log message to the file
             pw.println(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + " - " + message);
 
         } catch (IOException e) {
             // Basic Exception Handling (XI)
             System.err.println("Error writing to log file '" + filename + "': " + e.getMessage());
-            // e.printStackTrace(); // Optionally print stack trace for debugging
+            // Optionally print stack trace for debugging (useful for troubleshooting)
+            // e.printStackTrace(); 
         }
     }
 }
