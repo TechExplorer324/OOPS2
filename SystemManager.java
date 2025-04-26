@@ -1,5 +1,4 @@
 
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -16,6 +15,7 @@ public class SystemManager {
         Scanner scanner = new Scanner(System.in); // (XII) Scanner Class
 
         // Setup Users
+        // Creating users with different roles (Regular User, Admin)
         User user1 = new User("U001", "Alice", UserRole.REGULAR_USER);
         User user2 = new User("U002", "Bob", UserRole.REGULAR_USER);
         User user3 = new User("U003", "Charlie (Trucker)", UserRole.REGULAR_USER);
@@ -23,6 +23,7 @@ public class SystemManager {
         User admin = new User("A001", "Admin User", UserRole.ADMIN);
 
         // Setup Vehicles
+        // Creating various types of vehicles for users
         Vehicle car1 = new Car("CAR-123", user1);
         Vehicle bike1 = new Bike("BIKE-789", user2);
         Vehicle truck1 = new Truck("TRK-456", user3);
@@ -30,33 +31,33 @@ public class SystemManager {
         Vehicle car2 = new Car("CAR-444", user2); // Bob's second car
 
         // Setup Zones and Spots
+        // Creating parking zones (General Zone, EV Zone)
         ParkingZone generalZone = new ParkingZone("G", "General");
-        generalZone.addSpots(5, SpotType.REGULAR); // Varargs overload
-        generalZone.addSpots(3, SpotType.COMPACT);
-        generalZone.addSpots(new ParkingSpot("G-L1", SpotType.LARGE)); // Varargs overload
-        generalZone.addSpots(new ParkingSpot("G-M1", SpotType.MOTORBIKE), new ParkingSpot("G-M2", SpotType.MOTORBIKE));
+        generalZone.addSpots(5, SpotType.REGULAR); // Add regular spots
+        generalZone.addSpots(3, SpotType.COMPACT); // Add compact spots
+        generalZone.addSpots(new ParkingSpot("G-L1", SpotType.LARGE)); // Add large spot
+        generalZone.addSpots(new ParkingSpot("G-M1", SpotType.MOTORBIKE), new ParkingSpot("G-M2", SpotType.MOTORBIKE)); // Add motorbike spots
 
         ParkingZone evZone = new ParkingZone("EV", "EV Charging Zone");
-        // Overloaded constructor for charging spots
-        evZone.addSpot(new ParkingSpot("EV-C1", SpotType.ELECTRIC_CHARGING, true));
+        evZone.addSpot(new ParkingSpot("EV-C1", SpotType.ELECTRIC_CHARGING, true)); // Add EV charging spots
         evZone.addSpot(new ParkingSpot("EV-C2", SpotType.ELECTRIC_CHARGING, true));
-        evZone.addSpot(new ParkingSpot("EV-R1", SpotType.REGULAR)); // Regular spot in EV zone? Maybe allowed.
+        evZone.addSpot(new ParkingSpot("EV-R1", SpotType.REGULAR)); // Regular spot in EV zone
 
-        mainLot.addZone(generalZone);
-        mainLot.addZone(evZone);
+        mainLot.addZone(generalZone); // Add general zone to parking lot
+        mainLot.addZone(evZone); // Add EV zone to parking lot
 
-        // Setup Billing
-        mainLot.getBillingSystem().setPaymentProcessor(new CreditCardProcessor()); // Set default processor
-        mainLot.getBillingSystem().addZonePricingRule("EV", new BillingSystem.DynamicPricingRule(3.0, 1.8, 25.0)); // EV zone pricing
+        // Setup Billing System
+        mainLot.getBillingSystem().setPaymentProcessor(new CreditCardProcessor()); // Set default payment processor
+        mainLot.getBillingSystem().addZonePricingRule("EV", new BillingSystem.DynamicPricingRule(3.0, 1.8, 25.0)); // Add pricing rule for EV zone
 
         // --- Simulation Loop ---
         boolean running = true;
         while (running) {
-            printMenu();
+            printMenu(); // Display menu options
             System.out.print("Enter choice: ");
             int choice = -1;
             try {
-                choice = Integer.parseInt(scanner.nextLine()); // Read input
+                choice = Integer.parseInt(scanner.nextLine()); // Read user input
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
@@ -83,7 +84,7 @@ public class SystemManager {
                         mainLot.checkViolations();
                         break;
                     case 7: // Generate Report
-                        mainLot.generateReport(); // Uses static nested class
+                        mainLot.generateReport(); // Generates a parking report
                         break;
                     case 8: // View User Points
                         viewUserPoints(user1, user2, user3, user4, admin);
@@ -110,10 +111,11 @@ public class SystemManager {
         }
 
         System.out.println("Exiting Smart Parking System. Goodbye!");
-        scanner.close(); // Close scanner
+        scanner.close(); // Close scanner after use
     }
 
     private static void printMenu() {
+        // Displaying menu options for the user
         System.out.println("\n--- Smart Parking Menu ---");
         System.out.println("1. Park Vehicle");
         System.out.println("2. Exit Vehicle");
@@ -128,6 +130,7 @@ public class SystemManager {
     }
 
     private static void parkVehicle(Scanner scanner, ParkingLot lot, Vehicle... vehicles) throws SlotUnavailableException, InvalidVehicleTypeException, InvalidZoneException {
+        // Parking a vehicle
         System.out.println("Select vehicle to park:");
         for(int i=0; i<vehicles.length; i++) {
             System.out.printf("%d. %s (%s)\n", i+1, vehicles[i].getLicensePlate(), vehicles[i].getType());
@@ -143,6 +146,7 @@ public class SystemManager {
         System.out.print("Enter preferred zone ID (e.g., G, EV) or leave blank for any: ");
         String zonePref = scanner.nextLine().trim().toUpperCase();
 
+        // Assigning spot based on preference
         ParkingSpot assignedSpot;
         if (zonePref.isEmpty()) {
             assignedSpot = lot.assignSpot(selectedVehicle); // Use overloaded method (I)
@@ -153,6 +157,7 @@ public class SystemManager {
     }
 
     private static void exitVehicle(Scanner scanner, ParkingLot lot) throws PaymentException {
+        // Exiting a vehicle
         System.out.print("Enter license plate of vehicle to exit: ");
         String licensePlate = scanner.nextLine().trim().toUpperCase();
 
@@ -193,6 +198,7 @@ public class SystemManager {
     }
 
     private static void checkAvailability(ParkingLot lot) {
+        // Checking availability in parking lot
         System.out.println("\n--- Parking Availability ---");
         for (ParkingZone zone : lot.getZones().values()) {
             System.out.println("\nZone: " + zone.getZoneName() + " (" + zone.getZoneId() + ")");
@@ -222,6 +228,7 @@ public class SystemManager {
     }
 
     private static void makeReservation(Scanner scanner, ParkingLot lot, User user, Vehicle vehicle) throws SlotUnavailableException, InvalidZoneException {
+        // Making a reservation
         System.out.println("\n--- Make Reservation ---");
         System.out.println("User: " + user.getName() + ", Vehicle: " + vehicle.getLicensePlate());
         System.out.print("Enter desired zone ID (e.g., G, EV): ");
@@ -238,6 +245,7 @@ public class SystemManager {
     }
 
     private static void cancelReservation(Scanner scanner, ParkingLot lot) {
+        // Cancelling a reservation
         System.out.println("\n--- Cancel Reservation ---");
         System.out.print("Enter Reservation ID to cancel: ");
         String resId = scanner.nextLine().trim();
@@ -245,6 +253,7 @@ public class SystemManager {
     }
 
     private static void viewUserPoints(User... users) {
+        // Viewing loyalty points of users
         System.out.println("\n--- User Loyalty Points ---");
         for(User user : users) {
             System.out.printf("  User: %-20s Points: %d\n", user.getName() + " (" + user.getUserId() + ")", user.getLoyaltyPoints());
