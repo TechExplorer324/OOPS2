@@ -159,4 +159,9 @@ class Violation {
             v.markAsPaid();
     }
 }
+    public static class ViolationLogger {
+    public static void log(Violation violation) {
+        System.out.println("Logging Violation: " + violation.toLogFormat());
+    }
+}
 }
