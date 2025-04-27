@@ -379,7 +379,7 @@ class ParkingLot {
      * @param spot The spot to locate.
      * @return The Zone ID, or "UNKNOWN" if not found.
      */
-    private String findZoneIdForSpot(ParkingSpot spot) {
+    String findZoneIdForSpot(ParkingSpot spot) {
         for (Map.Entry<String, ParkingZone> entry : zones.entrySet()) {
             if (entry.getValue().getAllSpots().contains(spot)) {
                 return entry.getKey();
