@@ -153,15 +153,5 @@ class Violation {
     public int hashCode() {
         return Objects.hash(violationId); // Hash based on violationId to maintain uniqueness
     }
-    // Vararg method to mark multiple violations
-    public static void markAllAsPaid(Violation... violations) {
-        for (Violation v : violations) {
-            v.markAsPaid();
-    }
-}
-    public static class ViolationLogger {
-    public static void log(Violation violation) {
-        System.out.println("Logging Violation: " + violation.toLogFormat());
-    }
-}
+   
 }
