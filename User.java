@@ -23,13 +23,7 @@ class User {
         this.role = role;
         this.loyaltyPoints = 0; // Initialize loyalty points to 0 (using Integer wrapper)
     }
-    // Overloaded constructor
-public User(String userId, String name, UserRole role, int initialPoints) {
-    this.userId = userId;
-    this.name = name;
-    this.role = role;
-    this.loyaltyPoints = initialPoints;
-}
+    
     // --- Getters ---
     
     /**
@@ -90,12 +84,7 @@ public User(String userId, String name, UserRole role, int initialPoints) {
             this.loyaltyPoints += points; // Autoboxing/unboxing handles Integer/int types
         }
     }
-    // Overloaded method - Accept double points
-public void addLoyaltyPoints(double points) {
-    if (points > 0) {
-        this.loyaltyPoints += (int) points; // Cast double to int
-    }
-}
+    
     /**
      * Redeems loyalty points from the user's account.
      * Ensures there are enough points for redemption.
